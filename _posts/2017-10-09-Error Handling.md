@@ -39,5 +39,5 @@ So why the error did not stop execution ? Because this error is non terminating 
 The reason for this behaviour is usage of `WriteError` method instead of throwing exceptions. If cmdlet would throw exception or use `ThrowTerminatingError` method, the execution would immediately stop as exception are considered as terminating error in Powershell world.
 
 You can always read more on MSDN :)
-[https://msdn.microsoft.com/en-us/library/dd878240(v=vs.85).aspx]()
+[Read more on MSDN](https://msdn.microsoft.com/en-us/library/dd878240(v=vs.85).aspx)
 
