@@ -1,4 +1,5 @@
-# Powershell error handling techniques
+# Powershell Errors
+## Terminating & Non-Terminating Errors
 
 I guess every one of us got stuck at point where you needed to figure out what is the best way to handle errors in your function/script .
 
