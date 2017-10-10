@@ -83,7 +83,7 @@ See the output , it's exactly the same as previously , strange...
  Now you're thinking : "so how am I supposed to make this thing work the way I need ?" .
  The solution is easier than you think.
 
-You've might noticed that cmdlets have parameter called ErrorAction. If you dont know already what it means , let me just tell you that this is exactly what you're looking for.
+You might have noticed that cmdlets have parameter called ErrorAction. If you dont know already what it means , let me just tell you that this is exactly what you're looking for.
 Using this parameter changes the behaviour of the cmdlet, specifically how errors are handled. And it has couple of possible values , let's go through them.
 
 1. Stop
@@ -94,3 +94,15 @@ Using this parameter changes the behaviour of the cmdlet, specifically how error
     * Inform user there has been an error and let him decide what to do
 4. Continue
     * This is default ErrorAction setting , cmdlet displays errors but does not turn then into terminating ones. Which is exactly the case of our example.
+
+
+***To make our little piece of code work properly we need to do one small change.***
+
+From
+> Get-Process -Name 'test'
+
+To
+> Get-Process -Name 'test' -ErrorAction Stop
+
+If you execute the code again, you finally receive the expected Warning message saying `a problem occured` .
+Reason now should be clear - changing ErrorAction from default `Continue` to `Stop` turned all errors from *Get-Process* into terminating errors, which are captured by `Catch` block.
