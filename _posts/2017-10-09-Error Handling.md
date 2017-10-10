@@ -42,7 +42,8 @@ The reason for this behaviour is usage of `WriteError` method instead of throwin
 
 The first thing that people usually try is to wrap this potentially failing part in the try/catch block. And it makes sense right ?
 
-Well that is the tricky thing about non-terminating errors.
+Well that is the tricky thing about non-terminating errors. It won't help.
+
 Let's take a look how this thing works .
 
 
@@ -106,3 +107,54 @@ To
 
 If you execute the code again, you finally receive the expected Warning message saying `a problem occured` .
 Reason now should be clear - changing ErrorAction from default `Continue` to `Stop` turned all errors from *Get-Process* into terminating errors, which are captured by `Catch` block.
+
+But be aware that the ErrorAction was set only this one time, only for this one cmdlet, and it was not set globally , so all other cmdlets will use default `Continue` ***ErrorAction preferece*** , unles you specify the EA as we did here.
+
+But what if you want to set the ***ErrorAction preference*** (yes, that how it's called :D ) globally , because you dont want to specify this parameter for every single cmdlet, and you want all of them to throw always terminating errors.
+Powershell has a solution for that as well and it's called `ErrorAction Preference` .
+
+### ErrorAction Preference
+In general it is automatically defined variable. Let's take a look what PowerShell says about it.
+
+``` Powershell
+    Get-Variable ErrorActionPreference | Format-List -force
+```
+
+Output :
+```
+PSPath        : Microsoft.PowerShell.Core\Variable::ErrorActionPreference
+PSDrive       : Variable
+PSProvider    : Microsoft.PowerShell.Core\Variable
+PSIsContainer : False
+Name          : ErrorActionPreference
+Description   : Dictates the action taken when an error message is delivered
+Value         : Continue
+Visibility    : Public
+Module        : 
+ModuleName    : 
+Options       : None
+Attributes    : {System.Management.Automation.ArgumentTypeConverterAttribute}
+```
+
+As you can see from the Description, this is exactly what we were doing with the `Get-Process` but this affects ErrorAction setting globally .
+
+It was mentioned before that default value fro `$ErrorActionPreference` variable is 'Continue' , and changing it is no more complicated than assigning new string value to variable. Want to change the preference to 'Stop' for your script just run simply this
+```
+    $ErrorActionPreference  = 'Stop'
+```
+
+Since this moment all erorrs are treated as terminating, unles you override this setting by using `ErrorAction` parameter of cmdlet and use some different value like `SilentlyContinue` . This means you can do this .
+
+``` Powershell
+$ErrorActionPreference = 'SilentlyContinue'
+Stop-Process -Name 'test2'
+Get-Process -Name 'test' -ErrorAction Stop
+```
+
+- We set the `ErrorActionPreference` in the beggining to `SilentlyContinue`, that means that all errors will be ignored and hidden. 
+- Second line is executed, `ErrorAction` parameter is not specified , so Global setting from `ErrorActionPreference` is used.
+Process `test2` is not found, but error is ignored and not displayed. 
+- Script continues with 3rd line. Here we specified `ErrorAction` parameter, with value ***Stop*** . This overrides Global Preference, and just for this one cmdlet all errors are treated as terminating errors, which would lead to failure of script and termination of pipeline.
+
+
+Hopefully this shed some light on behaviour of errors in Powershell language.
