@@ -130,8 +130,9 @@ Attributes    : {System.Management.Automation.ArgumentTypeConverterAttribute}
 
 As you can see from the Description, this is exactly what we were doing with the `Get-Process` but this affects ErrorAction setting globally .
 
-It was mentioned before that default value fro `$ErrorActionPreference` variable is 'Continue' , and changing it is no more complicated than assigning new string value to variable. Want to change the preference to 'Stop' for your script just run simply this
-```
+It was mentioned before that default value of `$ErrorActionPreference` variable is 'Continue' , and changing it is no more complicated than assigning new string value to variable. Want to change the preference to 'Stop' for your script? Just run simply this
+
+``` Powershell
     $ErrorActionPreference  = 'Stop'
 ```
 
