@@ -7,7 +7,7 @@
 
 # Site Settings
 locale                   : "en"
-title                    : "Automation"
+title                    : "Thoughts of one Czech DevOps Engineer"
 title_separator          : "-"
 name                     : "Michal Zezula"
 description              : "Just a small blog to share my thoughts on automation topics."
@@ -79,7 +79,7 @@ analytics:
 author:
   name             : "Michal Zezula"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "Automation engineer"
+  bio              : "DevOps engineer"
   location         : "Czech Republic"
   email            : "zezulami@gmail.com"
   uri              :
