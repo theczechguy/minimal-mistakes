@@ -119,7 +119,6 @@ Therefore if you need to know what was the last error just access the first item
 
 - `check`  - this time we do not fill any *errorvariable* , instead we check if automatic variable ```$Error``` contains anything. If yes, it means that some error occured and we can deal with it.
   - In this case it's very important to clear the ```$Error``` variable after you handle errors, otherwise next time you would perfom such check, even though everything would be ok, the ```$Error``` variable would not be empty , causing fake failures. -> done by the line ```$Error.Clear() ```
-    - Instead of clearing the ```$Error``` variable , you could count number of errors, and if the count of errors in ```$Error``` variable is higher than expected then you know there is some new error.
 
 ``` PowerShell
 $result = get-childitem HKLM:\ -erroraction Silentlycontinue
@@ -127,5 +126,19 @@ $result = get-childitem HKLM:\ -erroraction Silentlycontinue
 if($Error){
     #handle error
     $Error.Clear()
+}
+```
+
+- Instead of clearing the ```$Error``` variable , you could count number of errors, and if the count of errors in ```$Error``` variable is higher than expected then you know there is some new error.
+- Use this technique only when you're sure the command will procedure only one error
+  - in the example below ```get-childitem``` cmdlet will produce actually multiple (2) errors !
+
+``` Powershell
+$errorCounter = 0
+$result = get-childitem HKLM:\ -erroraction Continue
+
+if($Error.Count -gt $errorCounter){
+    #handle error
+    $errorCounter++
 }
 ```
