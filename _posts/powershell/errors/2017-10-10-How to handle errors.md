@@ -48,6 +48,8 @@ catch{
 Catch is the place where you deal with exceptions.
 Here you decide what to do in case of fatal error - maybe some detailed logging of the error and then the most critical thing , you decide here how your code should proceed further . Meaning, is this error so fatal that I need to stop the execution, or it's a minor issue and code can proceed .
 
+Important to realize is that this block is executed only when code in `try` block produces ***terminating error***
+
 When your code enteres this block there is a special variable filled with the exception object accessible via `$_` or `$PSItem`
 
 For now all you need to know that this object contains all the details about the exception, in next articles I'll dig little bit deeper into this.
@@ -59,7 +61,7 @@ You can quickly examine object by using ```Format-List``` cmdlet or if you want 
 
 ``` Powershell
 $_ | Format-list
-
+or
 $_ | Format-Custom -Depth 2
 ```
 
@@ -74,3 +76,13 @@ catch{
 ```
 
 ### FINALLY
+And finally the Finally block. Usually this block is used to perform some cleanup operations, to make sure that no 'garbage' has left after , whatever you run in `try` block, but in the end it's up to you how and if you use it.
+
+Important thing to know is that this block is executed no matter what.
+Let me explain on different scenarios that can happen during execution.
+  - TRY/CATCH/FINALLY
+    - No error in `TRY` -> `CATCH` skipped -> `FINALLY`
+    - Error in `TRY` -> `CATCH` -> `FINALLY`
+  - TRY/FINALLY
+    - No error in `TRY` -> `FINALLY`
+    - Error in `TRY` -> unhandled exception is thrown -> `FINALLY`
