@@ -37,7 +37,7 @@ Try is the place where you put code, that could potentially throw terminating er
 
 ``` Powershell
 try{
-    1/0
+    get-childitem HKLM:\ -erroraction stop
 }
 catch{
     write-warning 'Something failed'
@@ -67,7 +67,7 @@ $_ | Format-Custom -Depth 2
 
 ``` Powershell
 try{
-    1/0
+    get-childitem HKLM:\ -erroraction stop
 }
 catch{
     write-warning 'Operationg : 1/0 failed'
@@ -86,3 +86,46 @@ Let me explain on different scenarios that can happen during execution.
   - TRY/FINALLY
     - No error in `TRY` -> `FINALLY`
     - Error in `TRY` -> unhandled exception is thrown -> `FINALLY`
+
+
+## Ignore & Check
+The name of this technique was used for a reason, as it suggests, you ***ignore*** and then you ***check*** something. 
+
+There are two possible approaches. Let's take a look.
+
+### 1
+
+- `ignore` - erroraction is in this case set to ***silentlycontinue*** , you can use any other than the ***stop*** for this technique to work.
+- `check`  - As you can see there is a new parameter used in this example : `ErrorVariable` . 
+By Specifying this parameter we tell to PowerShell to hide the error from user and instead save it to the variable called `failed`. Then, the next step is to check if the ```$failed``` variable contains anything, if yes we can deal with the error.
+
+  - notice how the variable is specified -> it is the name without the dollar sign !
+
+``` PowerShell
+$result = get-childitem HKLM:\ -erroraction Silentlycontinue -ErrorVariable failed
+
+if ($failed){
+    # handle error
+}
+```
+Wondering how to get the details of an error like we did in the `catch` block previously ? .
+I assume you've already noticed that powershell has number of automatic variables and one of them is ```$Error```
+Error variable contains all errors thrown in current session - it is an array of error objects.
+Therefore if you need to know what was the last error just access the first item in array -> ```$Error[0]```
+
+### 2
+
+- `ignore` - erroraction is in this case set to ***silentlycontinue*** , you can use any other than the ***stop*** for this technique to work.
+
+- `check`  - this time we do not fill any *errorvariable* , instead we check if automatic variable ```$Error``` contains anything. If yes, it means that some error occured and we can deal with it.
+  - In this case it's very important to clear the ```$Error``` variable after you handle errors, otherwise next time you would perfom such check, even though everything would be ok, the ```$Error``` variable would not be empty , causing fake failures. -> done by the line ```$Error.Clear() ```
+    - Instead of clearing the ```$Error``` variable , you could count number of errors, and if the count of errors in ```$Error``` variable is higher than expected then you know there is some new error.
+
+``` PowerShell
+$result = get-childitem HKLM:\ -erroraction Silentlycontinue
+
+if($Error){
+    #handle error
+    $Error.Clear()
+}
+```
