@@ -4,7 +4,7 @@
 Let's say you have complex folder structure , the names of folder are just way too long. At some point the path is so long that windows explorer is unable to access the rest of inner folders , and unable to delete the whole structure, because the path is too long.
 
 What "too long path" means ?
-Windows has max path lenght limit (***MAX_PATH***) .
+Windows has max path lenght limit defined by variable ***MAX_PATH*** .
 Absolute limit is 260 characters . But available for use is actually 256 characters.
 
 Read more about this here
@@ -15,24 +15,24 @@ Read more about this here
 The actuall problem is that standard tools , either CMD or Powershell, are unable to handle paths exceeding ***MAX_PATH*** .
 But tools like TotalCommander are able to work with them, so it's got to be possible, right ?
 
-It is indeed , it just requires small trick mentioned in the msdn article abowe. And that is prepending path with ***\\\\?\\*** .
+It is indeed , it just requires small trick mentioned in the msdn article abowe. And that is prepending path with ***\\\\?\\*** which enabled long path support.
 
 So let's take a look on possible implementation.
 This is how I've implemented it in our environment , not saying this is the only way :) .
 
 ## Implementation
-Our developers tend to create complex folder structure's which exceed the ***MAX_PATH*** limit, and as usual they don't cleanup their stuff after themselves . So it's our job to clean it, otherwise they would kill our HDD's soon.
+Our developers tend to create complex folder structure's which exceeds the ***MAX_PATH*** limit, and as usual they don't cleanup their stuff after themselves . So it's our job to clean it, otherwise they would kill our disks soon.
 
 Our case :
 - paths too long
 - some files are hiden or readonly
 
-There are reasons why I haven't use native Powershell cmdletls .
-FOr some reason Powershell , even Version 5,  contains bug in `Remove-Item` cmdlet .
+There are reasons why I haven't use native Powershell cmdlets .
+For some reason Powershell , even Version 5,  contains bug in `Remove-Item` cmdlet .
 
-IF you try to run
+If you try to run
 
-` Powershell
+``` Powershell
     Remove-Item -Force -Recurse -Path $directoryPath
 `
 
@@ -40,9 +40,9 @@ You will get following message : `Cannot remove item. The directory is not empty
 
 It is known bug and officialy is recommended to first use `Get-Childitem` with `recurse` parameter and pipe the results into `Remove-Item` .
 This works fine , until you need to perform this stuff automatically.
-It asks you to confirm the deletion , which is unacceptable when you need to automate stuff . I've read suggestions to use `-confirm:$false` but I had no luck here so I quickly realized I need to take more low level way and that is the almighty .NET .
+It asks you to confirm the deletion , which is unacceptable when you need to automate it . I've read suggestions to use `-confirm:$false` but I had no luck here so I quickly realized I need to take more low level way and that is the almighty .NET .
 
-It's important to note that this technique is valid only for systems Windows Version 6.3 and higher - Server 2012 R2 & Windows 8.1 .
+It's important to note that this technique is valid only for Windows systems with version 6.3 and higher - Server 2012 R2 & Windows 8.1 .
 
 I will describe here just most important steps , not the whole function.
 
