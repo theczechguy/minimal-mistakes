@@ -9,7 +9,7 @@ Absolute limit is 260 characters . But available for use is actually 256 charact
 
 Read more about this here
 
-`https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396#maxpath`
+[MSDN LINK](https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396#maxpath)
 
 ## What is the problem ?
 The actuall problem is that standard tools , either CMD or Powershell, are unable to handle paths exceeding ***MAX_PATH*** .
