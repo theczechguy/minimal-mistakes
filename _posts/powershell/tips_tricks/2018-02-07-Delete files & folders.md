@@ -103,10 +103,9 @@ catch{
 
 And this way the functions loops through all subfolders and tries to clear and remove them, one by one .
 
-From performance point of view it is not the fastest way to delete folders , but it can
-handle this very special case.
+From performance point of view it is not the fastest way to delete folders , but it can handle this very special case.
 
-Performance could be slightly improved by pipening results of EnumerateFiles and EnumerateDirectories. The speciality of these methods is that they start providing results immediatelly , it does not wait to first collect all data and then return results.
+Performance could be slightly improved by putting results of EnumerateFiles and EnumerateDirectories into pipe and process them immediatelly. The speciality of these methods is that they start providing results immediatelly , it does not wait to first collect all data and then return results.
 
 
 ``` Powershell
